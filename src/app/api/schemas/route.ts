@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
     try {
 
         const tables = await prisma.$queryRaw<Array<{ tablename: string }>>`
@@ -50,4 +50,48 @@ export async function POST(req: NextRequest) {
             { status: 500 }
         );
     }
-}
+};
+
+export async function DELETE(req: NextRequest) {
+    const { table, data } = await req.json()
+
+    try {
+        await prisma.$queryRaw`
+            DELETE FROM ${Prisma.raw(`"${table}"`)} 
+            WHERE id = ${data.id}
+        `;
+
+        return new NextResponse(
+            JSON.stringify({ status: true }),
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log('API Error:', error);
+        return new NextResponse(
+            JSON.stringify({ error: 'INTERNAL_SERVER_ERROR' }),
+            { status: 500 }
+        );
+    }
+};
+
+export async function PUT(req: NextRequest) {
+    const { table, data } = await req.json()
+
+    try {
+        await prisma.$queryRaw`
+            DELETE FROM ${Prisma.raw(`"${table}"`)} 
+            WHERE id = ${data.id}
+        `;
+
+        return new NextResponse(
+            JSON.stringify({ status: true }),
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log('API Error:', error);
+        return new NextResponse(
+            JSON.stringify({ error: 'INTERNAL_SERVER_ERROR' }),
+            { status: 500 }
+        );
+    }
+};
